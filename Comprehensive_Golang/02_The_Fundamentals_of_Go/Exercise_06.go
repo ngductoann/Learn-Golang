@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+const Pi = 3.14
+
 func main() {
 	// Type inference
 	/*
@@ -20,4 +22,19 @@ func main() {
 
 	v := 42 // try to change
 	fmt.Printf("v is of type %T\n", v)
+
+	// Constants
+	/*
+		NOTE:
+		- Constants are declared like variables, but with the const keyword.
+		- Constants can be character, string, boolean, or numeric values.
+		- Constants cannot be declared using the := syntax.
+	*/
+
+	const world = "world"
+	fmt.Println("Hello", world)
+	fmt.Println("Happy", Pi, "Day")
+
+	const Truth = true
+	fmt.Println("Go rules?", Truth)
 }
