@@ -87,3 +87,24 @@ In this syntax, condition is an expression that evaluates to either true or fals
 > greater
 >= greater or equal
 ```
+
+## Switch statements
+
+A switch statements is a control flow statement in programming that allows a program to evaluate an expression or variable and then selectively execute different blocks of code based on the value of the expression or variable. It provides a convenient way to write code that performs da program to evaluate an expression or variable and then selectively execute different blocks of code based on the value of the expression or variable.
+It provides a convenient way to write code that performs different actions based on a single variable or expression without having to use multiple if/else statements.
+The switch statement typically consists of a single expression or variable followed by a series of case statements that specify the different values that the expression or variable can take and the corresponding blocks of code to execute in each case.
+if the expression or variable matches one of the specified case values, the corresponding block of code is executed, and if none of the cases match, an optional default case can be used execute a fallback block of code.
+
+# Using select statement from concurrency communicate
+
+- **Concurrency** and **parallel** are related but distinct concepts in programming, including in the Go programming language.
+- **Concurrency** refers to code that is written in a concurrent design pattern. This means that the code has the potential to execute multiple tasks simultaneously, where each task may make progress independently of the others.
+  - In Go, concurrency is achieved using goroutines, lightweight threads of execution that are managed by the Go runtime.
+  - A Go program can create many goroutines that run concurrently, each performing a different task.
+  - The communication and synchronization of these goroutines is typically done using **channels** , which provide a way of goroutines to exchange data and coordinate their execution.
+- **Parallelism**, on the other hand, refers to the ability of a program to execute multiple tasks simultaneously by utilizing multiple CPUs or cores.
+  - Parallelism can often speed up the execution of a program by a program by allowing multiple parts of the program to run in parallel on different processors. In Go, parallelism can be achieved by running multiple goroutines on different processors using the go keyword.
+    - Serial/ Sequence execution
+      - The oppposite of parallel computing
+      - The oppposite of code running in parallel is code running serially or sequentially. In sequential execution, each instruction or task is executed on after the other in a predefined order, so that each instruction must wait for the previous one to finish before it can start. This differs from parallel execution, where multiple instructions or tasks can be executed simultaneously. Sequential execution is typically used when the instructions or tasks are dependent on each other, or when resources required to execute the code are limited. Parallel execution, on the other hand, is used to speed up the execution of code by running multiple instructions or tasks at the same time, often on multiple processors or cores
+- Go makes it easy to write concurrent code using goroutines and channels
