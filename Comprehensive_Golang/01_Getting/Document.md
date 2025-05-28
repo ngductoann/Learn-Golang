@@ -1,5 +1,11 @@
 # Document
 
+<!--toc:start-->
+- [Document](#document)
+  - [Printing](#printing)
+  - [Understanding text](#understanding-text)
+<!--toc:end-->
+
 ## Printing
 
 - General:

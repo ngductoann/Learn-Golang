@@ -1,5 +1,12 @@
 # Document
 
+<!--toc:start-->
+
+- [Document](#document)
+  - [Value and Type](#value-and-type)
+  - [Zero values](#zero-values)
+  <!--toc:end-->
+
 ## Value and Type
 
 - Go is statically typed, not dynamic
