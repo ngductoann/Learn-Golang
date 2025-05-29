@@ -1,5 +1,19 @@
 # Document
 
+<!--toc:start-->
+- [Document](#document)
+  - [Go runtime, the stack and heap memory](#go-runtime-the-stack-and-heap-memory)
+    - [Go runtime](#go-runtime)
+    - [The stack & The heap](#the-stack-the-heap)
+  - [The Go compiler](#the-go-compiler)
+  - [Understanding control flow](#understanding-control-flow)
+  - [If statements & Comparison operations](#if-statements-comparison-operations)
+  - [Switch statements](#switch-statements)
+  - [Using select statement from concurrency communicate](#using-select-statement-from-concurrency-communicate)
+  - [Using for statement to create loops](#using-for-statement-to-create-loops)
+  - [Multiple iteration - nesting a loop within a loop](#multiple-iteration-nesting-a-loop-within-a-loop)
+<!--toc:end-->
+
 ## Go runtime, the stack and heap memory
 
 ### Go runtime
@@ -95,7 +109,7 @@ It provides a convenient way to write code that performs different actions based
 The switch statement typically consists of a single expression or variable followed by a series of case statements that specify the different values that the expression or variable can take and the corresponding blocks of code to execute in each case.
 if the expression or variable matches one of the specified case values, the corresponding block of code is executed, and if none of the cases match, an optional default case can be used execute a fallback block of code.
 
-# Using select statement from concurrency communicate
+## Using select statement from concurrency communicate
 
 - **Concurrency** and **parallel** are related but distinct concepts in programming, including in the Go programming language.
 - **Concurrency** refers to code that is written in a concurrent design pattern. This means that the code has the potential to execute multiple tasks simultaneously, where each task may make progress independently of the others.
@@ -108,3 +122,25 @@ if the expression or variable matches one of the specified case values, the corr
       - The oppposite of parallel computing
       - The oppposite of code running in parallel is code running serially or sequentially. In sequential execution, each instruction or task is executed on after the other in a predefined order, so that each instruction must wait for the previous one to finish before it can start. This differs from parallel execution, where multiple instructions or tasks can be executed simultaneously. Sequential execution is typically used when the instructions or tasks are dependent on each other, or when resources required to execute the code are limited. Parallel execution, on the other hand, is used to speed up the execution of code by running multiple instructions or tasks at the same time, often on multiple processors or cores
 - Go makes it easy to write concurrent code using goroutines and channels
+
+## Using for statement to create loops
+
+There are three ways you can do loops in Go - they all just use the **for** keyword
+
+- for init;condition;post {}
+- for condition {}
+- for {}
+
+Keywords:
+
+- break
+- continue
+
+## Multiple iteration - nesting a loop within a loop
+
+- **Nested loops** are a type of control structure used in programming to repeat a set of instructions multiple times
+- As the name suggests, nested loops consist of one loop inside another loop
+  - The outer loop is executed first
+    - and for each iteration of the outer loop, the inner loop is executed completely.
+    - This means that the inner loop executes its set of instructions for every iteration of the outer loop
+- Nested loops are commonly used when working with multi-dimensional data structure such as arrays or matrices. They can also be used for tasks that require performing a specific action for every combination of two or more availables.
