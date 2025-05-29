@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 /*
 NOTE:
@@ -145,4 +148,74 @@ func main() {
 
 	xxs := [][]string{jb, jm}
 	fmt.Println(xxs)
+
+	// slice internal & underlying array 01
+	a2 := []int{0, 1, 2, 3, 4, 5}
+	b2 := a2
+
+	fmt.Println("a2", a2)
+	fmt.Println("b2", b2)
+	fmt.Println("-------------")
+
+	a2[0] = 7
+
+	// have same value
+	fmt.Println("a2", a2)
+	fmt.Println("b2", b2)
+	fmt.Println("-------------")
+
+	// slice internal & underlying array 02
+	a3 := []int{0, 1, 2, 3, 4, 5}
+	b3 := make([]int, 6)
+	copy(b3, a3) // copy value on a3 -> b3
+
+	fmt.Println("a3", a3)
+	fmt.Println("b3", b3)
+	fmt.Println("-------------")
+
+	a3[0] = 7
+
+	// have not same value
+	fmt.Println("a3", a3)
+	fmt.Println("b3", b3)
+	fmt.Println("-------------")
+
+	n := []float64{3, 1, 4, 2}
+
+	fmt.Println(medianOne(n))
+	fmt.Println("after medianOne", n) // n slice was sorted
+
+	y := []float64{3, 1, 4, 2}
+	fmt.Println(medianTwo(y))
+	fmt.Println("after medianTwo", y)
+}
+
+// Uses the same underlying array
+// everything is pass by value in go
+// the value is being passed into this func
+// and then assigned to x
+func medianOne(x []float64) float64 {
+	sort.Float64s(x)
+	i := len(x) / 2
+	if len(x)%2 == 1 {
+		return x[i/2]
+	}
+	return (x[i-1] + x[i]) / 2
+}
+
+func medianTwo(x []float64) float64 {
+	// allocate a new underlying array
+	n := make([]float64, len(x))
+	copy(n, x)
+
+	sort.Float64s(n)
+	i := len(n) / 2
+	if len(n)%2 == 1 {
+		return n[i/2]
+		// when you divide
+		// you get the whole number quotient
+		// without the remainder modulus
+		// https://go.dev/play/p/2r5WrelUEh7
+	}
+	return (n[i-1] + n[i]) / 2
 }
