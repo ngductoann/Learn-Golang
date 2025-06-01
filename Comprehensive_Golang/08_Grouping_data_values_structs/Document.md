@@ -1,5 +1,14 @@
 # Document
 
+<!--toc:start-->
+- [Document](#document)
+  - [Struct](#struct)
+    - [Introduction](#introduction)
+    - [Embedded structs](#embedded-structs)
+    - [Anonymous structs](#anonymous-structs)
+    - [Composition](#composition)
+<!--toc:end-->
+
 ## Struct
 
 ### Introduction
