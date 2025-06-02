@@ -345,3 +345,174 @@ LetThemSpeak(cat) // Output: Meow!
 ```
 
 Go interfaces define sets of method signature, and types implicitly satisfy these interfaces. Polymorphism in Go is achieved through interface, allowing different types to be treated uniformly based on their shared interface implementation. This flexibility promotes code reusability and abstraction.
+
+## Exploring the stringer interface
+
+In the Go programming language, the `Stringer` interface is a predefined interface that **allows types to define their own string representation.** It is part the `fmt` package and consists of a single method with the signature `String() string`.
+
+Here's the declaration of the `Stringer` interface in Go:
+
+```go
+type Stringer interface {
+  String() string
+}
+```
+
+To implement the `Stringer` interface, a type simply needs to define the `String()` method with the following signature:
+
+```go
+func (t T) String() string {
+  // Generate and return the string representation of t
+}
+```
+
+Here, 'T' represents the type implementing the `Stringer` interface. Inside the `String()` method, you should generate and return the desired string representation of the object of type `T`.
+
+Once a type implements the `Stringer` interface, it can be used with the `fmt` package to format and print the object using the `Print` and `Printf` functions or in string interpolation. **When a value of a `Stringer` type is encountered, the `fmt` package automatically calls the `String()` method to obtain the string representation.**
+
+Here's a simple example to illustrate the usage of the `Stringer` interface:
+
+```go
+package main
+
+import "fmt"
+
+type Person struct {
+  Name string
+  Age int
+  Gender string
+}
+
+// like toString() in Java
+func (p Person) String() string {
+  return fmt.Sprintf("Name: %s, Age: %d, Gender: %s", p.Name, p.Age, p.Gender)
+}
+
+func main() {
+  p := Person{Name: "John Doe", Age: 30, Gender: "Male"}
+  fmt.Println(p) // Automatically calls the String() method of Person
+}
+```
+
+In this example, the `Person` struct implements the `Stringer` interface by defining the `String()` method. The `String()` method returns a formatted string representation of the `Person` object. When `fmt.Println(p)` is called, it automatically invokes the `String()` method to obtain the string representation, resulting in the output: "Name: John Doe, Age: 30, Gender: Male".
+
+## Expanding on the stringer interface - wrapper func for logging
+
+- Implement a weapper func that takes type fmt.Stringer
+  - log.Println
+
+In the Go programming language, a **wrapper function**, also knows as a **wrapper**, is **a function that provides an additional layer of abstraction or functionality around an existing function** or method. It acts as an **intermediary** between the caller and the wrapped function, allowing you to modify inputs, outputs, or behavior **without directly modifying the original function.**
+
+Wrapper functions are commonly used for various purpose, such as:
+
+1. **Logging:** A wrapper function can add logging statemens before and after invoking the wrapped function. This helps in capturing information about the function calls, input parameters, return values, and any errors that may occur.
+2. **Timing and profiling:** Wrappers can be used to measure the execution time of functions, enabling performance analysis and profiling. By recording the start and end times, you can calculate the elapsed time and gater statistics.
+3. **Authentication and authorization:** Wrappers can handle authentication and authorization checks before executing the wrapped function. They can validate user credentials, verify permissions, and ensure that the caller has the necessary rights to access the wrapped functionality.
+4. Error handling: Wrappers can intercept errors returned by the wrapped function and transform them into a different error type or add more contextual information. They can also recover from panics and gracefully handle exceptional situations.
+
+Here's a simple example to illustrate the concept of a wrapper function in Go:
+
+```go
+package main
+
+import (
+  "fmt"
+  "time"
+)
+
+// Wrapper function for adding timing information
+func TimedFunction(fn func()) {
+  start := time.Now()
+  fn()
+  elapsed := time.Since(start)
+  fmt.Println("Elapsed time: ", elapsed)
+}
+
+// Function to be wrapped
+func MyFunction() {
+  time.Sleep(2 * time.Second) // Simulate some work
+  fmt.Println("MyFunction completed")
+}
+
+func main() {
+  // Call the wrapped function
+  TimedFunction(MyFunction)
+}
+```
+
+In the example above, the `TimedFunction` acts as a wrapper function that measures the elapsed time taken by `MyFunction` to execute. It captures the start time, calls `MyFunction`, calculates the elapsed time, and then prints it. By using the wrapper, you can easily add timing functionality to multiple functions without modifying their implementation.
+
+## Writer interface & writing to a file
+
+The **writer interface** is a fundamental concept used for **writing data to various output destinations**, including files. The writer interface is defined by the `io.Writer` interface type. It specifies a single method called `Write` with the following signature:
+
+```go
+func (w Writer) Writer (p []byte) (n int, err error)
+```
+
+**The `Write` method takes a byte slice (`[]byte`) as input** and returns the number of bytes written and an error (if any). It writes the contents of the byte slice to the underlying output destination.
+
+To write to a file using the writer interface, you need to create a file or open an existing file using the `os.Create` or `os.OpenFile` function, respectively. These functions return a file that implements the `io.Writer` interface. Here's an example:
+
+```go
+package main
+
+import {
+  "io"
+  "os"
+}
+
+func main(){
+  file, err := os.Create("output.txt")
+  if err != nil {
+    panic(err)
+  }
+
+  defer file.Close()
+
+  data := []byte("Hello, World!")
+
+  _, err = file.Write(data)
+  if err != nil {
+    panic(err)
+  }
+}
+```
+
+In this example, we use `os.Create` to create a new file called "output.txt" in the current directory. The `Create` function returns a file (`os.File`) the satisfies the `io.Writer` interface. We then defer the closing of the file using `file.Close()` to ensure it gets closed properly.
+
+Next, we create a byte slice `data` the content we want to write to the file. We call `file.Write(data)` to write the byte slice to the file. The `Write` method returns the number of bytes written and any error encountered during the write operation. If there's an error, we panic and terminate the program.
+
+by utilizing the writer interface, you can write data to files in Go using a consistent and flexible approach. Additionally, this interface is widely used in the Go standard library, enabling compatibility with various output destination beyoud files, such as network connection or other data streams.
+
+### The relationship between a **STRING** and a **[]BYTE**
+
+In go, a string and a []byte are two different types, but they are closely related and can often be converted between each other.
+
+A **string** in Go represents a sequence of characters. It is an immutable type, which means you cannot modify individual characters within a string. String valuesa are always interpreted as UTF-8 encoded Unicode text.
+
+On the other hand, a **[]byte** is a **slice of bytes**, where **each element represents a single byte.** It is a mulable type, so you can modify individual bytes within a byte slice. It can be used to represent binary data or text in various encodings.
+
+Go provides built-in functions to convert between strings and byte slices:
+
+1. Converting a **string to a byte slice**: You can convert a string to a byte slice using the `[]byte` type conversion. For example:
+
+```go
+str := "Hello"
+bytes := []byte(str)
+```
+
+This will create a new byte slice `bytes` that contains the UTF-8 encoded representation of the string "Hello". Modifying `bytes` will not affect the original string.
+
+2. Converting a **byte slice to a string:** You can convert a byte slice to a string using the `string()` type conversion. For example:
+
+```go
+bytes := []byte{72, 101, 108, 108, 111}
+str := string(bytes)
+```
+
+This will create a new string `str` that represents the UTF-8 encoded text corresponding to the byte slice. Modifying `str` will not affect the original byte slice.
+
+It's important to note that converting between strings and byte slices involves encoding and decoding operations, which can introduce potential errors if the encoding is not handled correctly. It's essential to be mindful of the encoding when working with these conversions to ensure accurate representation of the data.
+
+Overall, string and byte slices provide different ways of representing and manipulating textual or binary data in Go, and Go provides convenient methods to convert between these two types when necessary.
