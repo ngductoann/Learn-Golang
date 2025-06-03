@@ -405,7 +405,7 @@ In the Go programming language, a **wrapper function**, also knows as a **wrappe
 
 Wrapper functions are commonly used for various purpose, such as:
 
-1. **Logging:** A wrapper function can add logging statemens before and after invoking the wrapped function. This helps in capturing information about the function calls, input parameters, return values, and any errors that may occur.
+1. **Logging:** A wrapper function can add logging statements before and after invoking the wrapped function. This helps in capturing information about the function calls, input parameters, return values, and any errors that may occur.
 2. **Timing and profiling:** Wrappers can be used to measure the execution time of functions, enabling performance analysis and profiling. By recording the start and end times, you can calculate the elapsed time and gater statistics.
 3. **Authentication and authorization:** Wrappers can handle authentication and authorization checks before executing the wrapped function. They can validate user credentials, verify permissions, and ensure that the caller has the necessary rights to access the wrapped functionality.
 4. Error handling: Wrappers can intercept errors returned by the wrapped function and transform them into a different error type or add more contextual information. They can also recover from panics and gracefully handle exceptional situations.
@@ -516,3 +516,235 @@ This will create a new string `str` that represents the UTF-8 encoded text corre
 It's important to note that converting between strings and byte slices involves encoding and decoding operations, which can introduce potential errors if the encoding is not handled correctly. It's essential to be mindful of the encoding when working with these conversions to ensure accurate representation of the data.
 
 Overall, string and byte slices provide different ways of representing and manipulating textual or binary data in Go, and Go provides convenient methods to convert between these two types when necessary.
+
+## Writer interface & writing to a byte buffer
+
+A byte buffer is a **region of memory** used to **temporatily store a sequence of bytes.** It provides a data structure for efficient manipulation of byte data. A byte buffer allows you to **read and write bytes to and from the buffer,** making it useful for tasks like data serialization, network communication, network communication, file I/O, and efficient string manipulation.
+
+The concept of a byte buffer is not specific to any particular programming language but is a general concept in computer programming. Different programming languages may provide their own implementations of byte buffers, each with its own set of features and functionality.
+
+The purpose of a byte buffer is to provide a **flexible and efficient way to work with sequences of bytes.** It typically offers methods of functions for operations such as appending data, reading data, resizing the buffer, and converting the buffer's contents to different types (e.g., strings, integers, etc.)
+
+Byte buffer are commonly used to in scenarios where you need to manipulate raw binary data or handled I/O operations that involve byte-level operations. For example, when reading data from a network socket of a file, you can use a byte buffer to efficiently read and process chunks of bytes at a time.
+
+A byte buffer is a data structure that provides a convenient to manipulate sequences of bytes efficiently. It serves as a temporary storage for byte data and enables operations such as reading, writing, appending, and resizing byte sequence.
+
+In the Go programming language, `bytes.Buffer` is a type that provides a way to manipulate in-memory byte buffers. It is part of the standard library package called `bytes`.
+
+`bytes.Buffer` is designed to efficiently handle byte manipulation tasks, such as concatenation, appending, reading, and writing to a byte buffer. It provides a convenient interface to work with sequences of bytes, similar to a file or a string.
+
+You can create a new `bytes.Buffer` by using the `NewBuffer` function provided by the `bytes` package:
+
+```go
+import "bytes"
+
+// Create a new bytes.Buffer
+buffer := bytes.NewBuffer(nil)
+```
+
+The `nil` argument passed to `NewBuffer` initializes the buffer with an empty byte slice. Alternatively, you can initialize the buffer with an existing byte slice by passing it to `NewBuffer`, like this:
+
+```go
+data := []byte("Hello, World!")
+buffer := bytes.NewBuffer(data)
+```
+
+Once you have a `bytes.Buffer`, you can perform various operations on it. Some common operations include:
+
+- Appending data to the buffer using the `Write` or `WriteString` methods.
+- Reading data from the buffer using the `Read` or `ReadString` methods.
+- Getting the contents of the buffer as a byte slice using the `Bytes` method.
+- Getting the contents of the buffer as a string using the `String` method.
+- Resetting the buffer to its initial state using the `Reset` method.
+
+Here's an example that demonstrates some basic operations with a `bytes.Buffer`:
+
+```go
+import (
+  "fmt"
+  "bytes"
+)
+
+func main() {
+  buffer := bytes.NewBufferString("Hello, ")
+
+  // Append "World!" to the buffer
+  buffer.WriteString("World!")
+
+  // Reading the contents of the buffer
+  data := buffer.String()
+  fmt.Println(data) // Output: Hello, World!
+
+  // Reset the buffer
+  buffer.Reset()
+
+  // Append new data to the buffer
+  buffer.WriteString("Go programming language!")
+
+  // Read the contents of the buffer again
+  data = buffer.String()
+  fmt.Println(data) // Output: Go programming language!
+}
+```
+
+In this example, we create a `bytes.Buffer` initialized with the string "Hello, ". We then append "World!" to the buffer, read the contents, reset the buffer, and append new data. Finally, we read the contents again to see the updated value.
+
+`bytes.Buffer` is a flexible and efficient way to work with byte sequences in Go, often used for tasks like string manipulating, file I/O, or network communication.
+
+## Anonymous func
+
+**Anonymous self-executing func**
+
+- no parameters
+- 1 parameter
+
+**An anonymous function, often also called a function literal, lambda, or closure, is a function that is defined without being given a name.**  Anonymous functions can be used in programming where a function is expected but a named function is not necessary or not desirable.
+
+In Go, the concept of anonymous functions is supported. They can be used wherever function types are expected.
+Here is an example of an anonymous function in Go:
+
+```go
+func() {
+  fmt.Println("I'm an anonymous function!")
+}()
+```
+
+In this example, the function is declared using the `func` keyword, it takes no arguments, and it doesn't return any value. The function's body is enclosed in `{}` and then the function is immediately invoked with `()`.
+
+You can also assign an anonymous function to a variable and then invoke it using the variable name. Here's an example:
+
+```go
+printFunction := func() {
+  fmt.Println("I'm an anonymous function assigned to a variable!")
+}
+
+printFunction() // Call the function using the variable name
+```
+
+You can also create an anonymous function that accepts arguments and returns a value. Here is example:
+
+```go
+multiply := func(a int, b, int) int {
+  return a * b;
+}
+
+result := multiply(5, 10)
+fmt.Println(result) // this will print 50
+```
+
+It's important to note that, since Go supports closures, an anonymous function can access and modify variables defined outside of the function itself. This is a powerful feature, but it can also lead to unexpected side if not used carefully.
+
+## Func expression
+
+Assigning a func to a variable
+
+- **Assign a function to a variable**
+  - execute it
+- an expression is something that evaluates to a value
+- "first class citizen"
+
+**An expression** is combination of **values, variables, operations, and function calls that are evaluated to produce a single value.** It can be as simple as a literal value or a variable, or it can involve complex operations and function invocations.
+
+Here are some examples of expressions in Go:
+
+**1. Literal values:**
+
+- `42`: An integer literal expression representing the value 42
+- `"Hello, World!"`: A string literal expression representing the text "Hello, World!"
+
+**2. Variables:**
+
+- `x`: A variable expression expression representing the value stored in the variable `x`
+
+**3. Arithmetic expressions:**
+
+- `x + y`: An arithmetic expression that adds the values of variables `x` and `y`.
+- `5 * (x - 2)`: An arithmetic expression involving multiplication, subtraction, and parentheses.
+
+**4. Function calls:**
+
+- `math.Sqrt(16)`: a function call expression invoking the `Sqrt` function from the `math` package with the argument `16`.
+- `fmt.Sprintf("Value: %d", v)`: A function call expression invoking the `Sprintf` function from the `fmt` package, formatting the string `Value: %d` with the value of the variable `x`.
+
+**5. Logical expressions:**
+
+- `x > 10 && y < 20`: A logical expression combining the greater-than and less-than operations with logical AND.
+
+**6. Type conversions:**
+
+- `float64(x)`: A type conversion expression that converts the values of `x` to a `float64`.
+
+**Expressions are the building blocks on Go programs, and they are used to perform computations, manipulate values, and make decisions based on conditions. They can be assigned to variables, passed as arguments to functions, or used in control flow statements like if statements and loops.**
+
+The term **"first-class citizen"** refers to the status of certain **entities, such as values, type, and functions, that are treated equally and have the same compatibilities as other entities in the language.** It means that **these entities can be assigned to variables, passed as arguments to functions, and returned as values from functions,** just like any other data type in the language.
+
+In Go, **functions are considered first-class citizens.** **They can be assigned to variables, passed as arguments to other functions, and returned as values from functions.** This allows Go to support high-order functions, where functions can operate on the other functions. For example, you can define a function that takes another functions as an argument and then call that function within the body of the function.
+
+Here's an example that demonstrates the use of first-class function in Go:
+
+```go
+package main
+
+import "fmt"
+
+// Function that takes another function as an argument
+func applyOperation(a, b int, operation func(int, int) int) int {
+  return operation(a, b)
+}
+
+// Functions to be used as arguments
+func add(a, b int) int {
+  return a + b
+}
+
+func subtract(a, b, int){
+  return a - b
+}
+
+func main(){
+  result1 := applyOperation(5, 3, add) // Passing 'add' function as argument
+  result2 := applyOperation(8, 4, subtract) // Passing 'subtract' function as argument
+
+  fmt.Println(result1)
+  fmt.Println(result2)
+}
+```
+
+In the example, the `applyOperation` function takes two integers and a function as arguments. It applies the given function to the integers and returns the result. The `add` and `subtract` applies the given function to the integers and returns the result. The `add` and `subtract` functions are defined separately and passed as arguments to `applyOperation` when calling it.
+
+**The ability to treat functions as first-class citizens in Go allows for more flexible and modular code, enabling the use of higher-order functions, function composition, and other functional programming techniques.**
+
+## Returning a func
+
+**You can return a func from a func.** Here is what that looks like.
+Returning a function in the Go programming language is a form of using higher-order functions, which are functions that can accept other functions as arguments and/or return other functions as results. This is a common practice in function programming paradigms, but it's also available in multiparadigm languages like Go.
+
+Here's an example of a function returning another function in Go:
+
+```go
+package main
+
+import "fmt"
+
+// This function returns another function
+func incrementer() func() int {
+  i := 0
+
+  // Define and return an anonymous function
+  return func() int {
+    i += 1
+    return i
+  }
+}
+
+func main() {
+  increment := incrementer()
+  fmt.Println(increment()) // Output: 1
+  fmt.Println(increment()) // Output: 2
+  fmt.Println(increment()) // Output: 3
+}
+```
+
+In this code, the `incrementer` function creates a variable `i` and then defines an anonymous function that increments `i` by one each time it's called. This anonymous function captures the `i` variable from its enclosing scope, a feature known as closure in computer science.
+
+The `incrementer` function returns this anonymous function, and then in `main`, we call `incrementer` and assign the returned function to the `incrementer` variable. This variable is now itselft a function that we can call, and each time we call it, it increments its internal `i` counter and returns the new value.
