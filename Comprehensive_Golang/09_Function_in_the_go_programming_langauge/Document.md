@@ -1,5 +1,28 @@
 # Document
 
+<!--toc:start-->
+- [Document](#document)
+  - [Introduction to functions](#introduction-to-functions)
+  - [Syntax of functions in Go](#syntax-of-functions-in-go)
+  - [Variadic parameter](#variadic-parameter)
+  - [Unfurling a slice](#unfurling-a-slice)
+  - [Defer](#defer)
+  - [Methods](#methods)
+  - [Interface & polymorphism](#interface-polymorphism)
+  - [Exploring the stringer interface](#exploring-the-stringer-interface)
+  - [Expanding on the stringer interface - wrapper func for logging](#expanding-on-the-stringer-interface-wrapper-func-for-logging)
+  - [Writer interface & writing to a file](#writer-interface-writing-to-a-file)
+    - [The relationship between a **STRING** and a **[]BYTE**](#the-relationship-between-a-string-and-a-byte)
+  - [Writer interface & writing to a byte buffer](#writer-interface-writing-to-a-byte-buffer)
+  - [Anonymous func](#anonymous-func)
+  - [Func expression](#func-expression)
+  - [Returning a func](#returning-a-func)
+  - [Callback](#callback)
+  - [Closure](#closure)
+  - [Recursion](#recursion)
+  - [Wrapper function](#wrapper-function)
+<!--toc:end-->
+
 ## Introduction to functions
 
 - Introduction to modular code
@@ -747,4 +770,148 @@ func main() {
 
 In this code, the `incrementer` function creates a variable `i` and then defines an anonymous function that increments `i` by one each time it's called. This anonymous function captures the `i` variable from its enclosing scope, a feature known as closure in computer science.
 
-The `incrementer` function returns this anonymous function, and then in `main`, we call `incrementer` and assign the returned function to the `incrementer` variable. This variable is now itselft a function that we can call, and each time we call it, it increments its internal `i` counter and returns the new value.
+The `incrementer` function returns this anonymous function, and then in `main`, we call `incrementer` and assign the returned function to the `incrementer` variable. This variable is now itself a function that we can call, and each time we call it, it increments its internal `i` counter and returns the new value.
+
+## Callback
+
+The term **"callback"** in programming refers to **a function or piece of code that is passed as an argument to another function.** The term itself can be understood by breaking it down into "call" and "back".
+
+The "call" part refers to the action of invoking or executing a function, when a function is called, it starts executing its code, performs certain operations, and then returns a result.
+The "back" part refers to the idea that the callback function is called back or invoked by the original function after it has completed is execution or reached a specific point in its code.
+Instead of the original function returning a result and ending, it "calls back" the callback function, allowing it to execute some additional code or handled specific tasks.
+Callbacks are often used in event-driven programming or asynchronous operations, where the flow of execution is not linear. For example, in web development, callbacks are commonly use with JavaScript's asynchronous functions to handle responses from server requests or user interactions.
+The term "callback" has become a widely accepted convention in programming to describe this mechanism of passing functions as arguments to other functions and invoking them later. It emphasizes the idea that callback function is "called back" by the original function, enhancing the understanding of the code's flow and behavior.
+
+```go
+package main
+
+import "fmt"
+
+// Function that takes another function as an argument
+func applyOperation(a, b int, operation func (int, int) int) {
+  return operation(a, b)
+}
+
+// Function to be used as arguments
+func add(a, b int) int {
+  return a + b
+}
+
+func subtract(a, b int) {
+  return a - b
+}
+
+func main() {
+  result1 := applyOperation(5, 3, add)  // Passing 'add' function as argument
+  result2 := applyOperation(8, 4, subtract) // Passing 'subtract' function as argument
+  fmt.Println(result1) // Output: 8
+  fmt.Println(result2) // Output: 4
+}
+```
+
+## Closure
+
+- One scope enclosing other scopes
+  - variables declared in the outer scope are accessible in inner scopes
+- closure helps us limit the scope of variable
+
+In programming, closure refers to the combination of a function (or a method) and the environment in which it was defined. It allows a function to access variable and bindings that are outside of its own scope, even after the outer function has finished executing.
+
+A closure is created when a nested function references a variable from its containing (parent) function. The nested function retains a references to the environment in which in was defined, so it can access and manipulate variables from that environment, even if the parent function has already completed.
+
+Closures ara particularly useful in situations where you want to create functions that have access to certain variables or data that persist across multiple invocations. They enable you to encapsulate data and behavior together, creating self-contained functions with their own private state.
+
+Closures have various applications in programming, including data privacy, encapsulation, and create functions with persistent state or behavior. They can widely used in functional programming language and are a powerful tool for designing elegant and modular code.
+
+## Recursion
+
+- **a func that calls itself**
+- factotial example
+
+**Recursion** in programming refers to the technique of **solving a problem by breaking it down into smaller subproblems of the same type. In other word, a recursive function is a function that calls itself during its execution.**
+
+When a recursive function is called, it solves a small instance of the same problem, and then combines the result of the smaller instance with the current instance to obtain the final result. The function continues to call itself on smaller subproblems until it reaches a base case, which is a simple case that can be solved directly without further recursion.
+
+Recursion can be a powerful technique for solving problems that exhibit a recursive structure, such as tree traversal, graph traversal, and many mathematical calculations. However, it's important to design recursive functions carefully, ensuring that they have well-defined base cases and properly handle the termination condition, to avoid infinite recursion.
+
+## Wrapper function
+
+In the Go programming language, a **wrapper function** , also known as a **wrapper**, is a function that provides an provides an additional layer or abstraction or functionality around an existing function or method. It acts an **intermediary** between the caller and the wrapper function, allowing you to modify inputs, outputs, or behavior **without directly modifying the original function.** A wrapper function wraps or modifies another function's behavior.
+
+Wrapper functions are commonly used for various purposes, such as:
+
+1. **Logging:** A wrapper function can add logging statements before and after invoking the wrapper function. This helps in capturing information about the function calls, input parameters, return values, and any errors that may occur.
+2. **Time and profiling:** Wrappers can be used to measure the execution time of functions, enabling performance analysis and profiling. By recording the start and end times, you can calculate the elapsed time and gather statistics.
+
+3. **Authentication and authorization:** Wrappers can handle authentication and authorization checks before executing the wrapped function. They can validate user credentials, verify permissions and ensure that the caller has necessary rights to access the wrapped functionality.
+
+4. **Error handling:** Wrappers can intercept errors returned by the wrapper function and transform them into a different error type or add more contextual information. They can also recover from panics and gracefully handle exceptional situations.
+
+In Go programming language, a common practice is to use wrapper function for error handling. This approach is useful when you want to add more content to the error or handle different types of errors in specific way.
+
+Here is an example of how you might create a wrapper function to handle errors when reading a file:
+
+```go
+package main
+
+import (
+  "fmt"
+  "io/ioutil"
+  "os"
+)
+
+func readFile(filename string) ([] byte, errors) {
+  data, err := ioutil.ReadFile(filename)
+  if err != nil {
+    return nil, fmt.Errorf("readFile %s: %v", filename, err)
+  }
+
+  return data, nil
+}
+
+func main(){
+  data, err := readFile("test.txt")
+  if err != nil {
+    fmt.Println("Error", err)
+    os.Exit(1)
+  }
+
+  fmt.Printf("Data: %s\n", data)
+}
+```
+
+In this example, the `readFile` function is a wrapper around the `ioutil.ReadFile` function. If `ioutil.ReadFile` return an error, the `readFile` function wraps this error with additional context (the name of the file that caused the error) and returns this new error.
+
+When the `readFile` function is called from `main`, the error handling logic can use the additional context provided by the `readFile` function to provide more detailed error messages. This approach helps to create more robust and maintainable code by centralizing error handling logic within the wrapper function.
+
+And we same this example earlier of a wrapper function in Go:
+
+```go
+package main
+
+import (
+  "fmt"
+  "time"
+)
+
+// Wrapper function for adding timing information
+func TimedFunction(fn func()) {
+  start := time.Now()
+  fn()
+  elapsed := time.Since(start)
+  fmt.Println("Elapsed time:", elapsed)
+}
+
+// Function to be wrapped
+func MyFunction() {
+  time.Sleep(2 * time.Second) // Simulate some work
+  fmt.Println("MyFunction completed")
+}
+
+func main() {
+  // Call the wrapped function
+  TimedFunction(MyFunction)
+}
+```
+
+In the example above, the `TimedFunction` acts as a wrapper function that measures the elapsed time take by `MyFunction` to execute. It captures the start time, call `MyFunction` calculates the elapsed time, and then prints it. By using the wrapper, you can easily add timing functionality to multiple functions without modifying their implementation.
