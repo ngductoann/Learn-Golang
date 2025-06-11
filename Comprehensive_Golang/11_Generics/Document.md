@@ -1,5 +1,15 @@
 # Document
 
+<!--toc:start-->
+
+- [Document](#document)
+  - [Type constraints example](#type-constraints-example)
+    - [A non-generic function](#a-non-generic-function)
+    - [Add a generic function to handle multiple types](#add-a-generic-function-to-handle-multiple-types)
+    - [Remove type arguments when calling the generic function](#remove-type-arguments-when-calling-the-generic-function)
+    - [Declare a type constraint](#declare-a-type-constraint)
+    - [Concrete type vs interface type](#concrete-type-vs-interface-type)
+
 ## Type constraints example
 
 [Tutorial](https://go.dev/doc/tutorial/generics)
@@ -37,7 +47,7 @@ In this code, you:
 - SumFloats takes a map of string to float64 values.
 - SumInts takes a map of string to int64 values.
 
-At the top of main.go, beneath the package declaration, paste the following main function to initialize the two maps and use them as arguments when calling the functions you declarde in the preceding step:
+At the top of main.go, beneath the package declaration, paste the following main function to initialize the two maps and use them as arguments when calling the functions you declared in the preceding step:
 
 ```go
 func main() {
