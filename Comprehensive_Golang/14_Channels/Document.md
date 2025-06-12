@@ -313,3 +313,227 @@ func main() {
 ```
 
 `A channel may be constrained only to send or only to receive [general to specific] by conversion or assignment.`
+
+## Using channels
+
+- create general channels
+- in funcs you can specify
+  - receive channel
+    - you can receive values from the channel
+    - a receive channel parameter
+    - in the func, you can only pull values from the channel
+    - you can't close a receive channel
+  - send channel
+    - you can push value to the channel
+    - you can't receive / pull / read from the channel
+    - you can only push values to the channel
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+func main() {
+    c := make(chan int)         // Create a channel of type int
+
+    go send(c)                  // Start a Goroutine to send a value to the channel
+    receive(c)                  // Call the receive function to get the value from the channel
+
+    fmt.Println("about to exit") // Print a message before exiting the program
+
+}
+
+// send channel
+func send(c chan <- int) {
+    c <- 42 // Send the value 42 to the channel
+}
+
+// receive channel
+func receive(c <- chan int) {
+    fmt.Println("The value received from the channel", <-c) // Receive a value from the channel and print it
+}
+```
+
+**`Range stops reading from a channel when the channel is closed.`**
+
+**`Select statements pull the value from whatever channel has a value ready to be pulled`**
+
+building on previous code:
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+func main(){
+    even := make(chan int) // Create a channel for even numbers
+    odd := make(chan int)  // Create a channel for odd numbers
+    quit := make(chan bool) // Create a channel to signal completion
+
+    go send(even, odd, quit) // Start a Goroutine to send values to the channels
+    receive(even, odd, quit)  // Call the receive function to get values from the channels
+
+    fmt.Println("about to exit") // Print a message before exiting the program
+}
+
+// send channel
+func send(even, odd chan<- int,quit chan<- bool ){
+    for i := range 100 {
+        if i%2 == 0 {
+            even <- i // Send the even number to the even channel
+        } else {
+            odd <- i // Send the odd number to the odd channel
+        }
+    }
+
+    close(even) // Close the even channel to signal no more values will be sent
+    close(odd)  // Close the odd channel to signal no more values will be sent
+    quit <- true // Send a signal to the quit channel to indicate completion
+}
+
+func receive(even, odd <-chan int, quit <-chan bool) {
+    for {
+        select {
+        case v, ok := <-even: // Receive from the even channel
+            if !ok { // Check if the channel is closed
+                fmt.Println("Even channel closed")
+                return
+            }
+            fmt.Println("Received from even channel:", v)
+        case v, ok := <-odd: // Receive from the odd channel
+            if !ok { // Check if the channel is closed
+                fmt.Println("Odd channel closed")
+                return
+            }
+            fmt.Println("Received from odd channel:", v)
+        case <-quit: // Receive from the quit channel
+            fmt.Println("Quit signal received")
+            return
+        }
+    }
+}
+
+```
+
+### Fan In (Like N to 1)
+
+**`Taking values from many channels, and putting those values into one channel`**
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    even := make(chan int)
+    odd := make(chan int)
+    fanin := make(chan int)
+
+    go send(even, odd) // Start a Goroutine to send values to the even and odd channels
+    go receive(even, odd, fanin) // Start a Goroutine to receive values from the even and odd channels and send them to the fanin channel
+
+    for v := range fanin { // Range over the fanin channel to receive values
+        fmt.Println("Received from fanin channel:", v) // Print the received value
+    }
+
+    fmt.Println("about to exit") // Print a message before exiting the program
+}
+
+// send channel
+func send(even, odd chain<- int) {
+    for i := range 100 {
+        if i%2 == 0 {
+            even <- i // Send the even number to the even channel
+        } else {
+            odd <- i // Send the odd number to the odd channel
+        }
+    }
+    closed(even) // Close the even channel to signal no more values will be sent
+    close(odd)  // Close the odd channel to signal no more values will be sent
+}
+
+// receive channel
+func receive(even, odd <- chan int, fanin chan <- int) {
+    var wg sybc.WaitGroup
+    wg.Add(2) // Add two to the WaitGroup for the two Goroutines
+
+    go func() {
+        for v := range even {
+            fanin <- v // Send the value from the even channel to the fanin channel
+        }
+        wg.Done() // Signal that this Goroutine is done
+    }()
+
+    go func() {
+        for v := range odd {
+            fanin <- v // Send the value from the odd channel to the fanin channel
+        }
+        wg.Done() // Signal that this Goroutine is done
+    }
+
+    wg.Wait() // Wait for both Goroutines to finish
+    close(fanin) // Close the fanin channel to signal no more values will be sent
+}
+```
+
+### Fan Out (Like 1 to N)
+
+**`Taking some work and putting the chunks of work onto may goroutines`**
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+    "math/rand"
+    "time"
+)
+
+func main(){
+    c1 := make(chan int) // Create a channel for the first stage of processing
+    c2 := make(chan int) // Create a channel for the second stage of processing
+
+    go populate(c1) // Start a Goroutine to populate the first channel with values
+    fanOutIn(c1, c2) // Call the fanOutIn function to process values from c1 and send them to c2
+
+    for v := range c2 { // Range over the second channel to receive processed values
+        fmt.Println("Received from fanOutIn channel:", v) // Print the received value
+    }
+
+    fmt.Println("about to exit") // Print a message before exiting the program
+}
+
+func populate(c chan int) {
+    for i := range 100 {
+        c <- i // Send the value i to the channel
+    }
+    close(c) // Close the channel to signal no more values will be sent
+}
+
+func fanOutIn(c1, c2 chan int) {
+    var wg sync.waitGroup
+
+    for v := range c1 {
+        wg.Add(1) // Add one to the WaitGroup for each value received
+        go func(v2 int) {
+            c2 <- timeConsumingWork(v2) // Send the value to the second channel after processing
+            wg.Done() // Signal that this Goroutine is done
+        }(v)
+    }
+    wg.Wait() // Wait for all Goroutines to finish
+    close(c2) // Close the second channel to signal no more values will be sent
+}
+
+func timeConsumingWork(n int){
+    time.Sleep(time.Microsecond * time.Duration(rand.Intn(500)))
+    return n + rand.Intn(1000)
+}
+```
